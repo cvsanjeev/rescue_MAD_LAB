@@ -44,18 +44,42 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
   }
 
   Widget _buildNotificationArea() {
-    return Container(
-      padding: EdgeInsets.all(16.0),
-      color: Colors.red[100], // Placeholder color
-      child: Row(
-        children: [
-          Icon(Icons.notifications_active),
-          SizedBox(width: 10),
-          Text("New Emergency: Fire at Sector 5"), // Dynamic from data
-        ],
-      ),
+    return FutureBuilder<EmergencyPost?>(
+      future: _fetchLatestEmergency(),  // Fetch data on widget build
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Error loading notification'));
+        } else if (snapshot.hasData && snapshot.data != null) {
+          EmergencyPost latestPost = snapshot.data!;
+          return Container(
+            padding: EdgeInsets.all(16.0),
+            color: Colors.red[100],
+            child: Row(
+              children: [
+                Icon(Icons.notifications_active),
+                SizedBox(width: 10),
+                Flexible( // Introduce flexibility to handle long text
+                  child: Text("New Emergency: ${latestPost.type} at ${latestPost.location}"),
+                ),
+              ],
+            ),
+          );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
+  Future<EmergencyPost?> _fetchLatestEmergency() async {
+    final posts = await _dao.getAllPosts();
+    if (posts.isNotEmpty) {
+      // Assuming your posts are sorted with the newest first
+      return posts.last;
+    } else {
+      return null;
+    }
+  }
+
 
   Widget _buildEmergencyPostList() {
     return ListView.builder(
