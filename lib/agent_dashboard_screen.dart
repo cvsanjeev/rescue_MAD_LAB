@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'emergency_post.dart';
+import 'emergency_post_dao.dart';
+import 'issue_emergency_post_screen.dart';
 
 class AgentDashboardScreen extends StatefulWidget {
   @override
@@ -8,28 +10,19 @@ class AgentDashboardScreen extends StatefulWidget {
 
 class _AgentDashboardScreenState extends State<AgentDashboardScreen> {
   final String agencyName = "Agency X";
-   List<EmergencyPost> emergencyPosts = [];
+  final _dao = EmergencyPostDAO(); // Create DAO instance
+  List<EmergencyPost> _emergencyPosts = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchMockPosts(); // Fetch mock data on initialization
+    _loadPosts();
   }
 
-  void _fetchMockPosts() {
+  Future<void> _loadPosts() async {
+    final posts = await _dao.getAllPosts(); // Fetch from database
     setState(() {
-      emergencyPosts = [
-        EmergencyPost(
-          id: '1',
-          type: 'Fire',
-          location: 'Sector 5',
-          initialStatus: Status.New, // Use the enum for initial status
-          timestamp: DateTime.now(),
-          additionalDetails: 'Building fire',
-          issuingAgentId: 'agent123',
-        ),
-        // ... add more mock posts with different statuses if desired
-      ];
+      _emergencyPosts = posts;
     });
   }
   void _handleLogout() {
@@ -47,21 +40,28 @@ class _AgentDashboardScreenState extends State<AgentDashboardScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
-              onPressed: () {
-                // Replace with actual navigation logic later
-                print("Navigate to Issue Emergency Post screen");
+              onPressed: () async {
+                // 1. Navigate to the Issue Emergency Post screen
+                final newPost = await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => IssueEmergencyPostScreen())
+                );
+
+                // 2. Handle the new post
+                if (newPost != null) {
+                  _dao.insertPost(newPost); // Insert into database
+                  setState(() {
+                    _emergencyPosts.add(newPost); // Update the UI
+                  });
+                }
               },
               child: Text("Issue Emergency Post"),
             ),
-          ),
-          Expanded(
-            child: _buildEmergencyPostList(),
           ),
         ],
       ),
     );
   }
-
+/*
   Widget _buildEmergencyPostList() {
     if (emergencyPosts.isEmpty) {
       return Center(child: Text('No Previous Posts'));
@@ -73,7 +73,7 @@ class _AgentDashboardScreenState extends State<AgentDashboardScreen> {
         },
       );
     }
-  }
+  } */
 
   Widget _buildPostCard(EmergencyPost post) {
     return Card(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'emergency_post.dart';
+import 'emergency_post_dao.dart';
 
 class AgencyDashboardScreen extends StatefulWidget {
   @override
@@ -7,24 +8,21 @@ class AgencyDashboardScreen extends StatefulWidget {
 }
 
 class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
-  final List<EmergencyPost> _emergencyPosts = [
-    EmergencyPost(
-        id: '1',
-        type: "Fire",
-        location: "Sector 12",
-        timestamp: DateTime.now(),
-        additionalDetails: 'Building fire',
-        issuingAgentId: 'agent123',
-        initialStatus: Status.New), // Use the enum
-    EmergencyPost(
-        id: '2',
-        type: "Medical",
-        location: "Main Market",
-        additionalDetails: 'Building fire',
-        issuingAgentId: 'agent123',
-        timestamp: DateTime.now().subtract(Duration(hours: 2)),
-        initialStatus: Status.Acknowledged), // Use the enum
-  ];
+  final _dao = EmergencyPostDAO(); // Create DAO instance
+  List<EmergencyPost> _emergencyPosts = [];
+
+  @override
+  void initState() {
+  super.initState();
+  _loadPosts();
+  }
+
+  Future<void> _loadPosts() async {
+  final posts = await _dao.getAllPosts();
+  setState(() {
+  _emergencyPosts = posts;
+  });
+  }
   void _handleLogout() {
     Navigator.pushReplacementNamed(context, '/agencyLogin');}
   @override
