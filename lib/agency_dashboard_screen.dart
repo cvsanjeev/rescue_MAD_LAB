@@ -78,11 +78,13 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
           ],
         ),
         trailing: ElevatedButton(
-          onPressed: () {
-            // Update status (in real app, send to backend)
+          onPressed: () async {
+
             setState(() {
               post.updateStatus(Status.Acknowledged);
             });
+            await _dao.updateStatus(post, Status.Acknowledged);
+            setState(() {});
           },
           child: Text("Acknowledge"),
         ),

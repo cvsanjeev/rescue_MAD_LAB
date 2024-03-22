@@ -56,24 +56,28 @@ class _AgentDashboardScreenState extends State<AgentDashboardScreen> {
               },
               child: Text("Issue Emergency Post"),
             ),
+
+          ),
+          Expanded(
+            child: _buildEmergencyPostList(), // Call the function here
           ),
         ],
       ),
     );
   }
-/*
+
   Widget _buildEmergencyPostList() {
-    if (emergencyPosts.isEmpty) {
+    if (_emergencyPosts.isEmpty) {
       return Center(child: Text('No Previous Posts'));
     } else {
       return ListView.builder(
-        itemCount: emergencyPosts.length,
+        itemCount: _emergencyPosts.length,
         itemBuilder: (context, index) {
-          return _buildPostCard(emergencyPosts[index]);
+          return _buildPostCard(_emergencyPosts[index]);
         },
       );
     }
-  } */
+  }
 
   Widget _buildPostCard(EmergencyPost post) {
     return Card(

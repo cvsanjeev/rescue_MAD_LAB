@@ -29,5 +29,18 @@ class EmergencyPostDAO {
       return EmergencyPost.fromMap(maps[i]);
     });
   }
+  // emergency_post_dao.dart
+// ... other DAO methods ...
+
+  Future<void> updateStatus(EmergencyPost post, Status newStatus) async {
+    final db = await _getDatabase();
+    await db.update(
+      _tableName,
+      post.toMap(), // Include status update
+      where: 'id = ?',
+      whereArgs: [post.id],
+    );
+  }
+
 // ... add more methods for update, delete, etc.
 }
