@@ -4,6 +4,9 @@ import 'agentLogin.dart';
 import 'agencyLogin.dart';
 import 'agent_dashboard_screen.dart';
 import 'agency_dashboard_screen.dart';
+import 'agency_profile_screen.dart';
+import 'agent_profile_screen.dart';
+import 'manage_agents_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,6 +23,10 @@ class MyApp extends StatelessWidget {
       '/agencyLogin': (context) => AgencyLoginScreen(),
       '/agentDash': (context) => AgentDashboardScreen(),
       '/agencyDash': (context) => AgencyDashboardScreen(),
+      '/agencyProfile': (context) => AgencyProfileScreen(),
+      '/agentProfile': (context) => AgentProfileScreen(),
+      '/manageAgents': (context)=> ManageAgentsScreen(),
+
     },
       home: StartScreen(),
     );

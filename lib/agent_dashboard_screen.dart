@@ -28,13 +28,33 @@ class _AgentDashboardScreenState extends State<AgentDashboardScreen> {
   void _handleLogout() {
     Navigator.pushReplacementNamed(context, '/agentLogin');}
 
+  void _handleMenuSelection(String choice) {
+    switch (choice) {
+      case 'profile':
+        Navigator.pushNamed(context, '/agentProfile');
+        break;
+      case 'logout':
+        _handleLogout();
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Agent Dashboard - $agencyName"),
-        actions: [IconButton(onPressed:  _handleLogout , icon: Icon(Icons.logout))],
-      ),
+      actions: [
+        PopupMenuButton<String>( // Add a PopupMenuButton
+          onSelected: _handleMenuSelection,
+          itemBuilder: (BuildContext context) {
+            return [
+              PopupMenuItem(value: 'profile', child: Text('Profile')),
+              PopupMenuItem(value: 'logout', child: Text('Logout')),
+            ];
+          },
+        ),
+      ],),
       body: Column(
         children: [
           Padding(
