@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'agency_dao.dart';
 
 class AgencyLoginScreen extends StatefulWidget {
   @override
@@ -8,6 +9,7 @@ class AgencyLoginScreen extends StatefulWidget {
 class _AgencyLoginScreenState extends State<AgencyLoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passkeyController = TextEditingController();
+  final _agencyDAO = AgencyDAO();
 
   @override
   void dispose() {
@@ -15,16 +17,31 @@ class _AgencyLoginScreenState extends State<AgencyLoginScreen> {
     super.dispose();
   }
 
-  void _handleLogin() {
+  void _handleLogin() async { // Make it asynchronous
     if (_formKey.currentState!.validate()) {
-      // In a real app:
-      // 1. Retrieve the passkey from the controller
-      // 2. Send a login request to your backend
-      // 3. Validate the passkey against your database
-      // For now, let's simulate successful login:
-      Navigator.pushReplacementNamed(context, '/agencyDash');
+      final enteredAgencyId = int.tryParse(_passkeyController.text) ?? -1; // Get Agency ID
+
+      if (enteredAgencyId == -1) {
+        //  Handle invalid ID
+      } else {
+        // Fetch from database (using AgencyDAO)
+        final agency = await _agencyDAO.getAgencyById(enteredAgencyId);
+
+        if (agency != null) {
+          // Successful login, navigate...
+          Navigator.pushReplacementNamed(
+              context,
+              '/agencyDash',
+              arguments: {'agencyId': agency.id} // Pass the ID
+          );
+
+        } else {
+          // Show "Invalid ID" error message
+        }
+      }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

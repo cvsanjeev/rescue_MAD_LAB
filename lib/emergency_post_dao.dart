@@ -42,5 +42,15 @@ class EmergencyPostDAO {
     );
   }
 
+  Future<void> deletePost(EmergencyPost post) async {
+    final db = await _getDatabase();
+    await db.delete(
+      _tableName,
+      where: 'id = ?',
+      whereArgs: [post.id],
+    );
+  }
+
+
 // ... add more methods for update, delete, etc.
 }

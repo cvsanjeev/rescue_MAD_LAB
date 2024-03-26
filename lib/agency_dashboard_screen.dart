@@ -11,11 +11,27 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
   final _dao = EmergencyPostDAO(); // Create DAO instance
   List<EmergencyPost> _emergencyPosts = [];
 
+  int agencyId = 0;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _getAgencyIdFromArgs();
+  }
+
+  void _getAgencyIdFromArgs()  {
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    if (args.containsKey('agencyId')) {
+      setState(() {
+        agencyId = args['agencyId'];
+      });
+    }}
   @override
   void initState() {
   super.initState();
   _loadPosts();
   }
+
 
   Future<void> _loadPosts() async {
   final posts = await _dao.getAllPosts();
@@ -29,13 +45,39 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
   void _handleMenuSelection(String choice) {
     switch (choice) {
       case 'profile':
-        Navigator.pushNamed(context, '/agencyProfile');
+        Navigator.pushNamed(context, '/agencyProfile',arguments: {'agencyId': agencyId});
+
         break;
       case 'logout':
         _handleLogout();
         break;
     }
   }
+
+  void _showConfirmDeleteDialog(EmergencyPost post) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Confirm Delete'),
+        content: Text('Are you sure you want to delete this emergency?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), // Close dialog (Cancel)
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              await _dao.deletePost(post);
+              _loadPosts(); // Refresh the list
+              Navigator.pop(context); // Close dialog (Confirm)
+            },
+            child: Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -129,16 +171,25 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
             Text(post.status),
           ],
         ),
-        trailing: ElevatedButton(
-          onPressed: () async {
-
-            setState(() {
-              post.updateStatus(Status.Acknowledged);
-            });
-            await _dao.updateStatus(post, Status.Acknowledged);
-            setState(() {});
-          },
-          child: Text("Acknowledge"),
+        trailing: Row( // Wrap buttons in a Row for better layout
+            mainAxisSize: MainAxisSize.min, // Keep buttons close together
+            children: [
+            ElevatedButton(
+            onPressed: () async {
+              setState(() {
+                post.updateStatus(Status.Acknowledged);
+              });
+              await _dao.updateStatus(post, Status.Acknowledged);
+              setState(() {});
+      },
+        child: Text("Acknowledge"),
+      ),
+      SizedBox(width: 5), // Add some spacing
+      IconButton(
+        icon: Icon(Icons.delete, color: Colors.red),
+        onPressed: () => _showConfirmDeleteDialog(post),
+      ),
+      ],
         ),
       ),
     );
