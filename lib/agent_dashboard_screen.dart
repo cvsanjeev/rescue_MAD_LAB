@@ -33,6 +33,9 @@ class _AgentDashboardScreenState extends State<AgentDashboardScreen> {
       case 'profile':
         Navigator.pushNamed(context, '/agentProfile');
         break;
+      case 'Location': // Handle map navigation
+        Navigator.pushNamed(context, '/map'); // Route name of your MapScreen
+        break;
       case 'logout':
         _handleLogout();
         break;
@@ -50,6 +53,7 @@ class _AgentDashboardScreenState extends State<AgentDashboardScreen> {
           itemBuilder: (BuildContext context) {
             return [
               PopupMenuItem(value: 'profile', child: Text('Profile')),
+              PopupMenuItem(value: 'Location', child: Text('Location')),
               PopupMenuItem(value: 'logout', child: Text('Logout')),
             ];
           },

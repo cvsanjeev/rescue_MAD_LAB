@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled1/PublicDashboardScreen.dart';
+import 'package:untitled1/MapBody.dart';
 
 import 'EmergencyDetailsScreen.dart';
 import 'agent.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
       '/manageAgents': (context)=> ManageAgentsScreen(),
       '/emergencyDetails': (context) => EmergencyDetailsScreen(),
       '/dashboard': (context) => PublicDashboardScreen(),
+      '/map': (context) => MapBody(),
     },
       home: StartScreen(),
     );
@@ -81,18 +83,18 @@ class StartScreen extends StatelessWidget {
 
 
             ),
-
-            /* ElevatedButton(
+/*
+             ElevatedButton(
               onPressed: () async {
-                final agency1 = agency(name: 'Kasturba Medical College', id: 2, address: '');
+                final agency1 = agency(name: 'Manipal Police Station', id: 1, address: '');
                 //final agent1 = Agent(name: 'Agent Name',mobileNumber: '8138888678', status: 'Active',agencyId: 1, );
                 final newAgencyId = await _agencyDAO.insertAgency(agency1);
                 //final dao = AgentDAO();
                 //final newAgent=await dao.insertAgent(agent1);
               },
               child: Text('Admin'),
-            ), */
-
+            ),
+*/
           ],
         ),
       ),

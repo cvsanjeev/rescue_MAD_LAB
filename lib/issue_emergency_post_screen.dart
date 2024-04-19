@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'emergency_post.dart';
+import 'message.dart';
 
 class IssueEmergencyPostScreen extends StatefulWidget {
   @override
@@ -19,7 +21,8 @@ class _IssueEmergencyPostScreenState extends State<IssueEmergencyPostScreen> {
     _detailsController.dispose();
     super.dispose();
   }
-
+  GoogleMapController? _mapController;
+  LatLng _initialLocation = LatLng(13.36993, 74.78585);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +45,7 @@ class _IssueEmergencyPostScreenState extends State<IssueEmergencyPostScreen> {
                   return null;
                 },
               ),
+
               TextFormField(
                 controller: _locationController,
                 decoration: InputDecoration(labelText: 'Location'),
@@ -52,15 +56,20 @@ class _IssueEmergencyPostScreenState extends State<IssueEmergencyPostScreen> {
                   return null;
                 },
               ),
+              Expanded(
+                child: _buildMap(),
+              ),
               TextFormField(
                 controller: _detailsController,
                 decoration: InputDecoration(labelText: 'Additional Details'),
                 maxLines: 3,
               ),
+
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    sendSMS();
                     _submitForm();
                   }
                 },
@@ -73,7 +82,31 @@ class _IssueEmergencyPostScreenState extends State<IssueEmergencyPostScreen> {
     );
   }
 
+  Widget _buildMap() {
+    return GoogleMap(
+      onMapCreated: (controller) => _mapController = controller,
+      initialCameraPosition: CameraPosition(
+        target: _initialLocation,
+        zoom: 15.0,
+      ),
+      markers: {
+        Marker(
+          markerId: MarkerId("selected-location"),
+          position: _initialLocation,
+          draggable: true,
+          onDragEnd: (newPosition) {
+            setState(() {
+              _initialLocation = newPosition; // Update marker
+              _locationController.text = '${newPosition.latitude},${newPosition.longitude}';
+            });
+          },
+        ),
+      },
+    );
+  }
+
   void _submitForm() {
+    //final selectedLocation = _mapController!.CameraPosition.target;
     final newPost = EmergencyPost(
       id: DateTime.now().millisecondsSinceEpoch.toString(), // Temp ID
       type: _typeController.text,
@@ -85,4 +118,9 @@ class _IssueEmergencyPostScreenState extends State<IssueEmergencyPostScreen> {
     );
     Navigator.pop(context, newPost);
   }
+
+
+
+
 }
+
