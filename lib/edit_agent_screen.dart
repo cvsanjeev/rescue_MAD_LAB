@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'agent.dart';
+import 'agent_dao.dart';
 
 class EditAgentScreen extends StatefulWidget {
   final Agent agent;
@@ -15,6 +16,7 @@ class _EditAgentScreenState extends State<EditAgentScreen> {
   final _nameController = TextEditingController();
   final _mobileNumberController = TextEditingController();
   String _selectedStatus = '';
+  final _dao = AgentDAO();
 
   @override
   void initState() {
@@ -32,7 +34,7 @@ class _EditAgentScreenState extends State<EditAgentScreen> {
     super.dispose();
   }
 
-  void _saveChanges() {
+  void _saveChanges() async {
     // 1. Create an updated Agent object
     final updatedAgent = Agent(
       id: widget.agent.id, // Important: Retain the ID
@@ -41,6 +43,8 @@ class _EditAgentScreenState extends State<EditAgentScreen> {
       status: _selectedStatus,
       agencyId: widget.agent.agencyId,
     );
+    AgentDAO agentDao = AgentDAO(); // Assuming you have an instance
+    await agentDao.updateAgent(updatedAgent);
 
     // 2. Use your AgentDAO to update in the database
     // ... (Call a function in your AgentDAO like updateAgent(updatedAgent))
@@ -82,3 +86,4 @@ class _EditAgentScreenState extends State<EditAgentScreen> {
     );
   }
 }
+

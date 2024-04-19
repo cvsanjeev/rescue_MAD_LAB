@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:untitled1/PublicDashboardScreen.dart';
 
+import 'EmergencyDetailsScreen.dart';
 import 'agent.dart';
 import 'agentLogin.dart';
 import 'agencyLogin.dart';
@@ -11,6 +13,7 @@ import 'agent_profile_screen.dart';
 import 'manage_agents_screen.dart';
 import 'agency_dao.dart';
 import 'agency.dart';
+import 'PublicDashboardScreen.dart';
 
 
 void main() => runApp(MyApp());
@@ -31,7 +34,8 @@ class MyApp extends StatelessWidget {
       '/agencyProfile': (context) => AgencyProfileScreen(),
       '/agentProfile': (context) => AgentProfileScreen(),
       '/manageAgents': (context)=> ManageAgentsScreen(),
-
+      '/emergencyDetails': (context) => EmergencyDetailsScreen(),
+      '/dashboard': (context) => PublicDashboardScreen(),
     },
       home: StartScreen(),
     );
@@ -50,6 +54,13 @@ class StartScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pushNamed(context, '/dashboard'); // Replace '/dashboard' with your actual route name
+              },
+              child: Text('Public Dashboard'), // Changed to 'Dashboard'
+            ),
             Image.asset(
               'images/a.png', // Placeholder - add your logo
               width: 200,              // Adjust the size
@@ -70,17 +81,18 @@ class StartScreen extends StatelessWidget {
 
 
             ),
-            /*
-            ElevatedButton(
+
+            /* ElevatedButton(
               onPressed: () async {
-                //final agency1 = agency(name: 'Test Agency', id: 1, address: '');
-                final agent1 = Agent(name: 'Agent Name',mobileNumber: '8138888678', status: 'Active',agencyId: 1, );
-                //final newAgencyId = await _agencyDAO.insertAgency(agency1);
-                final dao = AgentDAO();
-                final newAgent=await dao.insertAgent(agent1);
+                final agency1 = agency(name: 'Kasturba Medical College', id: 2, address: '');
+                //final agent1 = Agent(name: 'Agent Name',mobileNumber: '8138888678', status: 'Active',agencyId: 1, );
+                final newAgencyId = await _agencyDAO.insertAgency(agency1);
+                //final dao = AgentDAO();
+                //final newAgent=await dao.insertAgent(agent1);
               },
               child: Text('Admin'),
             ), */
+
           ],
         ),
       ),

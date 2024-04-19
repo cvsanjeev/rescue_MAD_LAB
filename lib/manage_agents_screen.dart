@@ -13,10 +13,25 @@ class _ManageAgentsScreenState extends State<ManageAgentsScreen> {
   final _dao = AgentDAO();
   List<Agent> _agents = [];
   final _searchController = TextEditingController();
-  int agencyId = 0;
+  int agencyId = 1;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _getAgencyIdFromArgs();
+  }
+
+  void _getAgencyIdFromArgs()  {
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    if (args.containsKey('agencyId')) {
+      setState(() {
+        agencyId = args['agencyId'];
+      });
+    }}
+  @override
   Widget build(BuildContext context) {
+    didChangeDependencies();
+    _loadAgents();
     return Scaffold(
       appBar: AppBar(
         title: Text("Manage Agents"),
@@ -170,7 +185,8 @@ Widget _buildAgentList() {
               child: ListTile( // Your existing ListTile
                 title: Text(agent.name),
                 subtitle: Text(agent.mobileNumber),
-                trailing: DropdownButton<String>( // Add status dropdown
+                trailing: StatefulBuilder(
+            builder: (context, setState) => DropdownButton<String>(  // Add status dropdown
                   value: agent.status,
                   items: ['Active', 'Offline', 'Other Status']
                       .map<DropdownMenuItem<String>>((String value) {
@@ -187,6 +203,7 @@ Widget _buildAgentList() {
                       _changeAgentStatus(agent, newStatus); // Update in the database
                     }
                   },
+                ),
                 ),
               ),
             );

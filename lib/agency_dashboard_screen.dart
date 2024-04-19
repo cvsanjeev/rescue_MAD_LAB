@@ -12,7 +12,6 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
   List<EmergencyPost> _emergencyPosts = [];
 
   int agencyId = 0;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -81,13 +80,14 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    didChangeDependencies();
     return Scaffold(
       appBar: AppBar(
         title: Text("Agency Dashboard"),
         actions: [IconButton( // New button
           icon: Icon(Icons.manage_accounts), // An appropriate icon
           onPressed: () {
-            Navigator.pushNamed(context, '/manageAgents');
+            Navigator.pushNamed(context, '/manageAgents',arguments: {'agencyId': agencyId});
           },
         ),
           PopupMenuButton<String>( // Add a PopupMenuButton
@@ -162,7 +162,12 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
 
   Widget _buildPostCard(EmergencyPost post) {
     return Card(
-      child: ListTile(
+        child: GestureDetector( // Add GestureDetector here
+        onTap: () {
+      // Handle the tap event - Navigate to details
+      Navigator.pushNamed(context, '/emergencyDetails', arguments: {'emergencyPost': post});
+    },
+        child: ListTile(
         title: Text(post.type),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,6 +197,6 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
       ],
         ),
       ),
-    );
+    ));
   }
 }

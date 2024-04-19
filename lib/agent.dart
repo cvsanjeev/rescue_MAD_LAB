@@ -6,7 +6,7 @@ class Agent {
   final int agencyId;
 
   Agent({
-     this.id, // Add a unique identifier
+     this.id,
     required this.name,
     required this.mobileNumber,
     required this.status,

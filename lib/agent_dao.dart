@@ -86,5 +86,33 @@ class AgentDAO {
     }
   }
 
+  Future<List<Agent>?> getAgentById(int enteredAgentId) async {
+    final db = await _getDatabase();
+
+    try {
+      final List<Map<String, dynamic>> maps = await db.query(
+        _tableName,
+        where: 'mobileNumber = ?',
+        whereArgs: [enteredAgentId],
+      );
+
+      return List.generate(maps.length, (i) {
+        print('DEBUG: Data for Agent $i: ${maps[i]}');
+        return Agent(
+
+          id: maps[0]['id'],
+          name: maps[0]['name'],
+          mobileNumber: maps[0]['mobileNumber'],
+          status: maps[0]['status'],
+          agencyId: maps[0]['agencyId'],
+        );
+      });
+
+    } catch(error) {
+      print('Error fetching agents by agent ID: $error');
+      return []; // Return an empty list on error
+    }
+  }
+
 
 }

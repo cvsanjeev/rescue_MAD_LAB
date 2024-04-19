@@ -6,8 +6,6 @@ class AgentProfileScreen extends StatefulWidget {
 }
 
 class _AgentProfileScreenState extends State<AgentProfileScreen> {
-  // ... variables representing agency data go here ...
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

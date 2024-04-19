@@ -101,21 +101,26 @@ class _AgentDashboardScreenState extends State<AgentDashboardScreen> {
 
   Widget _buildPostCard(EmergencyPost post) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(post.type, style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Text('Location: ${post.location}'),
-            Text('Status: ${post.status}'),
-            Text('Submitted: ${post.timestamp}'),
-            SizedBox(height: 8),
-            Text('Details: ${post.additionalDetails}'),
-          ],
-        ),
-      ),
-    );
+        child: GestureDetector( // Add GestureDetector here
+          onTap: () {
+            // Handle the tap event - Navigate to details
+            Navigator.pushNamed(context, '/emergencyDetails', arguments: {'emergencyPost': post});
+          },
+          child: ListTile(
+            title: Text(post.type),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(post.location),
+                Text(post.status),
+                Text('${post.timestamp}'),
+              ],
+            ),
+            trailing: Row( // Wrap buttons in a Row for better layout
+              mainAxisSize: MainAxisSize.min, // Keep buttons close together
+
+            ),
+          ),
+        ));
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'agent_dao.dart';
 class AgentLoginScreen extends StatefulWidget {
   @override
   _AgentLoginScreenState createState() => _AgentLoginScreenState();
@@ -10,7 +10,7 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
   final _mobileNumberController = TextEditingController();
   final _otpController = TextEditingController(); // For the OTP input field
   bool _showOtpField = false;
-
+  final _agentDAO = AgentDAO();
   @override
   void dispose() {
     _mobileNumberController.dispose();
@@ -26,19 +26,45 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
     }
   }
 
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      // Hardcoded OTP Logic (Temporary)
-      if (_otpController.text == "123456") {
-        Navigator.pushReplacementNamed(context, '/agentDash');
+      final enteredAgentId = int.tryParse(_mobileNumberController.text) ?? -1;
+
+      if (enteredAgentId == -1) {
+        // Handle invalid ID (Display error message)
       } else {
-        // Display error message (e.g., SnackBar or Dialog)
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Invalid OTP"))
-        );
+        try {
+          // Fetch agent data
+          final agent = await _agentDAO.getAgentById(enteredAgentId);
+
+          if (agent != null) {
+            if (agent.isNotEmpty) {
+              int? firstAgentId = agent[0].id;
+             // print(firstAgentId);
+            }
+
+            // Compare OTP with agent's stored OTP (if you store OTPs)
+            if (_otpController.text == "123456") { // Replace with your OTP logic
+              Navigator.pushReplacementNamed(context, '/agentDash', arguments: {'agentId': agent[0].id}); // Pass agentId
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Invalid OTP"))
+              );
+            }
+          } else {
+            // Handle the case where the agent was not found
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Agent not found"))
+            );
+          }
+        } catch (error) {
+          print('Error Logging In: $error');
+          // Handle general errors during the login process
+        }
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
